@@ -35,6 +35,10 @@ class Pref(object):
 
   # static variable used as default in function calls:
   __dummy = None
+  
+  @classmethod
+  def init(cls):
+    cls.__dummy = Pref([],[])
 
   @staticmethod 
   def by_best_piece (pieces, best_piece_index):
@@ -90,7 +94,7 @@ class Pref(object):
   def repr_chain(chain):
     return "<".join(map(str,chain))
 
-  def cycle(self, global_pref=__dummy):
+  def cycle(self, global_pref=Pref.__dummy):
     """ returns one cycle in this pref (if there is a cycle) """
     inequalities = Pref.unique(self.inequalities+global_pref.inequalities)
     dg = DiGraph(inequalities)
@@ -108,7 +112,7 @@ class Pref(object):
         if cyc: return cyc[0]
     return None
 
-  def calc_poset(self, global_pref=__dummy):
+  def calc_poset(self, global_pref=Pref.__dummy):
     inequalities = self.inequalities+global_pref.inequalities
     eq_inequalities = []
     for eq in self.equalities:
@@ -125,7 +129,7 @@ class Pref(object):
     self.cached_poset = Poset([[],inequalities], linear_extension=False)
     return self.cached_poset
 
-  def get_poset(self, global_pref=__dummy):
+  def get_poset(self, global_pref=Pref.__dummy):
     if self.cached_poset: return self.cached_poset
     return self.calc_poset(global_pref)
 
@@ -200,7 +204,7 @@ class Pref(object):
 
 print "class Pref defined." # for debug in sage notebook
 
-Pref.__dummy = Pref([],[])
+Pref.init()
 
 def Pref_examples():
 	# EXAMPLES OF STATIC METHODS:
