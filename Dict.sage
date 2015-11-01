@@ -10,8 +10,7 @@
 # Date:   2015-10
 #
 
-# load ("/home/erelsgl/git/envy-free/Pref.sage")
-
+load ("/home/erelsgl/git/envy-free/Pref.sage")
 
 def and_dicts(dict1, dict2):
     """
@@ -46,7 +45,14 @@ def dict_to_posets(dict, debug=None):
     return the_dict_of_posets
     
 def dict_cycles(dict):
-    """ returns a dict with the cycles in each pref in this dict (if any) """
+    """ 
+       Returns a dict with the cycles in each pref in this dict (if any) 
+       
+       EXAMPLES::       
+    
+       sage: dict_cycles({'a':Pref([[2,1],[3,4]]), 'b':Pref([[1,2]]), '*':Pref([[2,1]]), '?': ["cycle test"]})    
+       {'?': 'cycle test', 'b': '1<2<1'}
+    """
     the_dict_of_cycles = {}
     global_pref = dict['*']
     for agent,pref in dict.iteritems():
@@ -62,20 +68,37 @@ def dict_cycles(dict):
 
 
 def dict_implied_by_best_piece(base_dict, agent, pieces, best_piece_index):
-    base_dict['?'] = [agent+" wants "+pieces[best_piece_index]]
-    base_dict[agent] = Pref(inequalities=Pref.by_best_piece(pieces,best_piece_index))
+    """
+       EXAMPLES::
+       
+       sage: dict_implied_by_best_piece({'*':[]}, "b", ["1","2","3"], -1)
+       {'*': [], '?': ['b prefers 3 to 1 2'], 'b': 1<3 2<3 }
+    """
+    best_piece = pieces[best_piece_index]
+    dominated_pieces = Pref.dominated_pieces(pieces, best_piece_index)
+    base_dict['?'] = [agent+" prefers "+best_piece+" to "+(" ".join(dominated_pieces))]
+    base_dict[agent] = Pref ( inequalities = 
+       [[dominated_piece, best_piece] for dominated_piece in dominated_pieces] )
     return base_dict
-    
-def dict_explanation(dict):
-	if dict.has_key('?'):
-		return "Assume the case   " + dict['?'][-1] + ". Then:"
-	else:
-		return ""
+
+def dict_interesting_global_inequalities(self):
+    if not self.has_key('*'):
+        return None
+    return self['*'].interesting_global_inequalities()
+
+def print_dict_explanation(self, space):
+    if self.has_key('?'):
+        global_inequalities = dict_interesting_global_inequalities(self)
+        if not global_inequalities:
+           print space+"Assume the case   " + self['?'][-1] + ". Then:"
+        else:
+           print space+"Assume the case   " + self['?'][-1] + ". Then globally: "+global_inequalities+". Then:"
+       
 
 def Dict_examples():
     # EXAMPLE (expected: {'?': ['dict1', 'dict2'], 'a': 1<2 5<6, 'b': 3<4, 'c': 7<8})
     print and_dicts({'a':Pref([[1,2]]), 'b':Pref([[3,4]]), '?': ['dict1']}, 
-          {'a':Pref([[5,6]]), 'c':Pref([[7,8]]), '?': ['dict2']})	
+          {'a':Pref([[5,6]]), 'c':Pref([[7,8]]), '?': ['dict2']})    
           
     # EXAMPLE (expected: {'a': 1<2, 'b': 3<4})
     print and_dicts({'a':Pref([[1,2]]), 'b':Pref([[3,4]])}, {'b': Pref([])})
@@ -85,10 +108,4 @@ def Dict_examples():
     
     # EXAMPLE (expected: ValueError: The graph is not directed acyclic)
     #print dict_to_posets({'a':Pref([[1,2],[3,4]]), 'b':Pref([[1,2]]), '*':Pref([[2,1]])})
-    
-    # EXAMPLE (expects: {'?': ['cycle test'], 'b': [1, 2, 1]})
-    print dict_cycles({'a':Pref([[2,1],[3,4]]), 'b':Pref([[1,2]]), '*':Pref([[2,1]]), '?': ["cycle test"]})    
-    
-    # EXAMPLE
-    print dict_implied_by_best_piece({'*':[]}, "b", ["1","2","3"], -1)
-    
+   

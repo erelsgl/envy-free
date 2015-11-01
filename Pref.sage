@@ -12,8 +12,24 @@
 #
 #
 
+   
 class Pref(object):
   def __init__(self,inequalities=None,equalities=None,chain=None):
+    """
+       EXAMPLES::
+ 
+       sage: Pref([[1,2]])
+       1<2
+       
+       sage: Pref([],[[3,4]])
+       3=4
+       
+       sage: Pref([[1,2]],[[3,4,5]])
+       1<2 3=4=5
+ 
+       sage: Pref(chain=[1,2,3])
+       1<2 2<3
+    """
     if chain and not inequalities:
       inequalities = Pref.by_chain(chain)
     self.inequalities = inequalities if inequalities else [] # each element [x,y] means "x<y".
@@ -34,22 +50,43 @@ class Pref(object):
     for x in self.equalities:
         the_repr += "=".join(map(str,x))+" "
     return the_repr
+    
+  def interesting_global_inequalities(self):
+    the_repr = ""
+    for x in self.inequalities:
+        if len(x[0])>1 and len(x[1])>1 and x[0][-1]!=x[1][-1]:
+           the_repr += str(x[0])+"<"+str(x[1])+" "
+    return the_repr
+
 
   @staticmethod 
-  def by_best_piece (pieces, best_piece_index):
-    """
-       pieces is a list ordered from worst to best, e.g. ["1","2","3","4"].
-       best_piece_index is an index to that list.
-       returns a pref which means that this piece is the best.
-    """
-    the_prefs = []
+  def dominated_pieces(pieces, best_piece_index):
+    the_dominated_pieces = []
     len_pieces = len(pieces)
     if best_piece_index<0: best_piece_index+=len_pieces
     for i in range(len_pieces):
         if i!=best_piece_index:
-            the_prefs.append([pieces[i], pieces[best_piece_index]])
-    return the_prefs
+            the_dominated_pieces.append(pieces[i])
+    return the_dominated_pieces
 
+  @staticmethod 
+  def by_best_piece (pieces, best_piece_index):
+    """
+       pieces:           a list of piece names, e.g. ["1","2","3","4"].
+       best_piece_index: an index to that list.
+       returns:          a pref which means that this piece is the best.
+       
+       EXAMPLES::
+
+          sage: Pref.by_best_piece([1,2,3,4], 2)
+          [[1, 3], [2, 3], [4, 3]]
+          
+          sage: Pref.by_best_piece([1,2,3,4], -1)  
+          [[1, 4], [2, 4], [3, 4]]
+    """
+    best_piece = pieces[best_piece_index]
+    dominated_pieces = Pref.dominated_pieces(pieces, best_piece_index)
+    return [[dominated_piece, best_piece] for dominated_piece in dominated_pieces]
 
   @staticmethod 
   def by_chain(pieces):
@@ -63,23 +100,14 @@ class Pref(object):
     return the_prefs
 
 
-  @staticmethod 
-  def by_sign(sign, piece1, piece2):
-    """
-       returns a pref which means that piece1<piece2 
-       or vice versa, depending on sign.
-    """
-    if not sign:
-      return []
-    if sign<0:
-      return [ [piece1, piece2] ]
-    if sign>0:
-      return [ [piece2, piece1] ]
-    return [ ]
-
-
   @staticmethod
   def unique(old_list):
+    """
+       EXAMPLES::
+       
+       sage: Pref.unique([[1,3],[2,4],[3,1],[1,3]])
+       [[1, 3], [2, 4], [3, 1]]
+    """       
     new_list = []
     [new_list.append(obj) for obj in old_list if obj not in new_list]
     return new_list
@@ -225,52 +253,38 @@ Pref_dummy = Pref([],[])
   
  
 def Pref_examples():
-	# EXAMPLES OF STATIC METHODS:
-	print Pref.by_best_piece([1,2,3,4], 2)  # expects: [[1, 3], [2, 3], [4, 3]]
-	print Pref.by_best_piece([1,2,3,4], -1)  # expects: [[1, 4], [2, 4], [3, 4]]
-	print Pref.by_sign(-1, 5,6) + Pref.by_sign(1, 5,6) + Pref.by_sign(0, 5,6) + Pref.by_sign(None, 5,6) # expects: [[5, 6], [6, 5]]
-	print Pref.unique([[1,3],[2,4],[3,1],[1,3]])  # expects: [[1, 3], [2, 4], [3, 1]]
 
-	print Pref(chain=[1,2,3])  # expects: 1<2 2<3
+    # EXAMPLE OF COPY:
+    aa=copy(a); print aa   # expects:    "1<2"
+    bb=copy(b); print bb   # expects:    "3=4"
+    cc=copy(c); print cc   # expects:    "1<2 3=4"
 
-	# EXAMPLE OF REPR:
-	a=Pref([[1,2]]);  print a   # expects:    "1<2"
-	b=Pref([],[[3,4]]);  print b   # expects:    "3=4"
-	c=Pref([[1,2]],[[3,4,5]]);   print c   # expects:    "1<2 3=4=5"	
+    aa.inequalities += [[5,6]]; print aa #expects: "1<2 5<6"
+    print a #expects: "1<2"
 
-	# EXAMPLE OF COPY:
-	aa=copy(a); print aa   # expects:    "1<2"
-	bb=copy(b); print bb   # expects:    "3=4"
-	cc=copy(c); print cc   # expects:    "1<2 3=4"
+    # EXAMPLE OF INFERRING RELATIONS:
+    a=Pref([["1","2"],["3","5b"],["5bb","3"],["5bbb","3"],["4b","3"],["5bbb","5bb"]], equalities=[["5cc","3"]]);
+    print a.global_cover_relations_of("5cc")         # expects [['5bb', '5cc'], ['5cc', '5b']]
 
-	aa.inequalities += [[5,6]]; print aa #expects: "1<2 5<6"
-	print a #expects: "1<2"
+    prefs3=[[1,2],[2,3],[4,1]]
+    # EXAMPLES OF FINDING CYCLES: with only inequalities:
+    print Pref(prefs3).cycle()  # expects: None
+    print Pref(prefs3+[[3,1]]).cycle()  # expects: [1, 2, 3, 1]
+    # with global inequalities:
+    print Pref(prefs3).cycle(Pref([[3,1]]))  # expects: [1, 2, 3, 1]
+    # with equalities:
+    print Pref(prefs3, equalities=[[3,4]]).cycle()  # expects: [1, 2, (3=4), 1]
+    print Pref(prefs3, equalities=[[4,3]]).cycle()  # expects: [1, 2, (4=3), 1]
+    print Pref(prefs3+[[3,1]], equalities=[[4,3]]).cycle()  # expects: [1, 2, 3, 1]
 
-	# EXAMPLE OF INFERRING RELATIONS:
-	a=Pref([["1","2"],["3","5b"],["5bb","3"],["5bbb","3"],["4b","3"],["5bbb","5bb"]], equalities=[["5cc","3"]]);
-	print a.global_cover_relations_of("5cc")         # expects [['5bb', '5cc'], ['5cc', '5b']]
-
-	prefs3=[[1,2],[2,3],[4,1]]
-	# EXAMPLES OF FINDING CYCLES: with only inequalities:
-	print Pref(prefs3).cycle()  # expects: None
-	print Pref(prefs3+[[3,1]]).cycle()  # expects: [1, 2, 3, 1]
-	# with global inequalities:
-	print Pref(prefs3).cycle(Pref([[3,1]]))  # expects: [1, 2, 3, 1]
-	# with equalities:
-	print Pref(prefs3, equalities=[[3,4]]).cycle()  # expects: [1, 2, (3=4), 1]
-	print Pref(prefs3, equalities=[[4,3]]).cycle()  # expects: [1, 2, (4=3), 1]
-	print Pref(prefs3+[[3,1]], equalities=[[4,3]]).cycle()  # expects: [1, 2, 3, 1]
-
-	# EXAMPLE OF CALCULATING POSET:
-	prefs3=[[1,2],[2,3],[4,1]]
-	print Pref(prefs3).calc_poset().cover_relations()  # expects: [[4, 1], [1, 2], [2, 3]]
-	print Pref(prefs3, equalities=[[2,5]]).calc_poset().cover_relations()  # expects: [[4, 1], [1, 2], [1, 5], [2, 3], [5, 3]]
-	
-	# EXAMPLE OF may_be_best:
-	p=Pref(chain=["1","2","3","4"])
-	print p.may_be_best("4", ["4"]),p.may_be_best("3", ["4"]),p.may_be_best("2", ["4"]),p.may_be_best("1", ["4"])  # True True False False
-	print p.may_be_best("4", ["3"]),p.may_be_best("3", ["3"]),p.may_be_best("2", ["3"]),p.may_be_best("1", ["3"])  # True False False False
-	print p.may_be_best("4", ["2"]),p.may_be_best("3", ["2"]),p.may_be_best("2", ["2"]),p.may_be_best("1", ["2"])  # True False False False
-	print p.may_be_best("4", ["4","3"]),p.may_be_best("3", ["4","3"]),p.may_be_best("2", ["4","3"]),p.may_be_best("1", ["4","3"])  # True True True False	
-
-
+    # EXAMPLE OF CALCULATING POSET:
+    prefs3=[[1,2],[2,3],[4,1]]
+    print Pref(prefs3).calc_poset().cover_relations()  # expects: [[4, 1], [1, 2], [2, 3]]
+    print Pref(prefs3, equalities=[[2,5]]).calc_poset().cover_relations()  # expects: [[4, 1], [1, 2], [1, 5], [2, 3], [5, 3]]
+    
+    # EXAMPLE OF may_be_best:
+    p=Pref(chain=["1","2","3","4"])
+    print p.may_be_best("4", ["4"]),p.may_be_best("3", ["4"]),p.may_be_best("2", ["4"]),p.may_be_best("1", ["4"])  # True True False False
+    print p.may_be_best("4", ["3"]),p.may_be_best("3", ["3"]),p.may_be_best("2", ["3"]),p.may_be_best("1", ["3"])  # True False False False
+    print p.may_be_best("4", ["2"]),p.may_be_best("3", ["2"]),p.may_be_best("2", ["2"]),p.may_be_best("1", ["2"])  # True False False False
+    print p.may_be_best("4", ["4","3"]),p.may_be_best("3", ["4","3"]),p.may_be_best("2", ["4","3"]),p.may_be_best("1", ["4","3"])  # True True True False    

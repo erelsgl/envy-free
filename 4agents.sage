@@ -10,6 +10,10 @@
 #    C:Equalize(3)
 #
 
+#load ("/home/erelsgl/git/envy-free/Pref.sage")
+load ("/home/erelsgl/git/envy-free/Dict.sage")
+load ("/home/erelsgl/git/envy-free/Opts.sage")
+
 def filter_by_equalize2_failure_4pieces(space, dict, cutter, observers, cycles):
     """
         space:     a string of spaces for display purposes.
@@ -90,18 +94,18 @@ def prove_4pieces_for_given_orders(b_order, c_order):
     if not opts_1: return None
 
     for dict_1 in opts_1:
-        print " "*2, dict_explanation(dict_1)
-        opts_2 = filter_by_equalize3_failure_4pieces(" "*4, dict_1, cutter="b",observers="c",cycles=None)
+        print_dict_explanation(dict_1, " "*3)
+        opts_2 = filter_by_equalize2_failure_4pieces(" "*4, dict_1, cutter="c",observers="b",cycles=None)
         if not opts_2: continue
-        
+
         for dict_2 in opts_2:
-            print " "*4,  dict_explanation(dict_2)
-            opts_3 = filter_by_equalize2_failure_4pieces(" "*6, dict_2, cutter="c",observers="b", cycles=None)
+            print_dict_explanation(dict_2, " "*5)
+            opts_3 = filter_by_equalize3_failure_4pieces(" "*6, dict_2, cutter="b",observers="c", cycles=[])
             if not opts_3: continue
             
             for dict_3 in opts_3:
-                print " "*6,  dict_explanation(dict_3)
-                opts_4 = filter_by_equalize3_failure_4pieces(" "*8, dict_3, cutter="c",observers="b", cycles=None)
+                print_dict_explanation(dict_3, " "*7)
+                opts_4 = filter_by_equalize3_failure_4pieces(" "*8, dict_3, cutter="c",observers="b", cycles=[])
                 if not opts_4: continue
 
                 print "Failure!"
@@ -117,13 +121,12 @@ def prove_4pieces():
     c_orders = Poset([a_pieces,[]]).linear_extensions()
     num_of_c_orders = len(c_orders)
     
-    print "Consider the following",num_of_c_orders,"cases regarding the preferences of b and c:"
-    
     for b_order in b_orders: 
+        print "Assume w.l.o.g. that b's preferences are", Pref.repr_chain(b_order), "."
+        print "Consider the following",num_of_c_orders,"cases regarding the preferences of c:"
         for index_c,c_order in enumerate(c_orders):
             print "\nCASE",(index_c+1),"OF",num_of_c_orders, \
-                  ": b's order is", Pref.repr_chain(b_order), \
-                  "and c's order is", Pref.repr_chain(c_order),":"
+                  ": c's order is", Pref.repr_chain(c_order),":"
             
             prove_4pieces_for_given_orders(b_order, c_order)
     print "\nQ.E.D!"

@@ -52,7 +52,8 @@ def filter_opts(title, opts1, opts2, cycles=None):
         opts1_exps = opts_explanations(opts1)
         if opts1_exps:
             if len(opts1_exps)<=4:  # short explanations
-                exps = ": " + (";  ".join(", ".join(map(str,l)) for l in opts1_exps))
+                #exps = ": " + (";  ".join(", ".join(map(str,l)) for l in opts1_exps))
+                exps = ": " + (";  ".join(l[-1] for l in opts1_exps))
             else:  # long explanations
                 exps = ""
         cases_string = "case" if len(opts1)==1 else "cases"
