@@ -89,10 +89,10 @@ def dict_interesting_global_inequalities(self):
 def print_dict_explanation(self, space):
     if self.has_key('?'):
         global_inequalities = dict_interesting_global_inequalities(self)
-        if not global_inequalities:
-           print space+"Assume the case   " + self['?'][-1] + ". Then:"
-        else:
-           print space+"Assume the case   " + self['?'][-1] + ". Then globally: "+global_inequalities+". Then:"
+        #if not global_inequalities:
+        print space+"Assume the case   " + self['?'][-1] + ". Then:"
+        #else:
+        #   print space+"Assume the case   " + self['?'][-1] + ". Then globally: "+global_inequalities+". Then:"
        
 
 def Dict_examples():

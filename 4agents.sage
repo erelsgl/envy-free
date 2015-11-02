@@ -27,19 +27,23 @@ def filter_by_equalize2_failure_4pieces(space, dict, cutter, observers, cycles):
         If this fails, it means that the other agent prefers either "4b" or "3" over the other pieces.        
     """
 
-    title = space+cutter+":Equalize(2)"
-    the_opts = []   # a disjunction (OR) of possible preferences.
-    
     whole_pieces = dict[cutter].chain;
     trimmed_pieces = list(whole_pieces);  trimmed_pieces[-1]+=cutter
     monotonicity_prefs = [ [trimmed_pieces[-1], whole_pieces[-1]] ]
     whole_pieces_before_trimming = whole_pieces[-1:]
     trimmed_pieces_after_trimming = trimmed_pieces[-1:]
+    equalized_pieces = trimmed_pieces[-2:]
+    title = space+cutter+":Equalize(2) means that "+cutter+"'s best pieces are: "+("=".join(equalized_pieces))
 
-    dict[cutter].equalities.append(trimmed_pieces[-2:])
+    dict[cutter].equalities.append(equalized_pieces)
     dict[cutter].calc_poset()
-    dict['*'].inequalities += monotonicity_prefs + dict[cutter].global_cover_relations(trimmed_pieces_after_trimming)
+    global_cover_relations = dict[cutter].global_cover_relations(trimmed_pieces_after_trimming)
+    if global_cover_relations:
+        title += ", so globally: "+Pref.repr_inequalities(global_cover_relations)
+    dict['*'].inequalities += monotonicity_prefs + global_cover_relations
 
+    title += ". This"
+    the_opts = []  # the conditions under which Equalize(2) failes.
     for observer in observers:
         observer_pref = dict[observer]
         if observer_pref.is_best(whole_pieces[-2]):
@@ -63,9 +67,6 @@ def filter_by_equalize3_failure_4pieces(space, dict, cutter, observers, cycles):
         If this fails, it means that the other agent prefers either "2" or "1" over the other pieces.
     """
 
-    title = space+cutter+":Equalize(3)"
-    the_opts = []
-
     whole_pieces = dict[cutter].chain;
     trimmed_pieces = list(whole_pieces);  trimmed_pieces[-1]+=cutter+cutter;   trimmed_pieces[-2]+=cutter+cutter; 
     floor_piece = whole_pieces[-3]
@@ -73,11 +74,18 @@ def filter_by_equalize3_failure_4pieces(space, dict, cutter, observers, cycles):
                            [trimmed_pieces[-2], whole_pieces[-2]       ] ]
     whole_pieces_before_trimming = whole_pieces[-2:]
     trimmed_pieces_after_trimming = trimmed_pieces[-2:]
+    equalized_pieces = trimmed_pieces[-3:]
+    title = space+cutter+":Equalize(3) means that "+cutter+"'s best pieces are: "+("=".join(equalized_pieces))
 
-    dict[cutter].equalities.append(trimmed_pieces[-3:])
+    dict[cutter].equalities.append(equalized_pieces)
     dict[cutter].calc_poset()
-    dict['*'].inequalities += monotonicity_prefs + dict[cutter].global_cover_relations(trimmed_pieces_after_trimming)
+    global_cover_relations = dict[cutter].global_cover_relations(trimmed_pieces_after_trimming)
+    if global_cover_relations:
+        title += ", so globally: "+Pref.repr_inequalities(global_cover_relations)
+    dict['*'].inequalities += monotonicity_prefs + global_cover_relations
     
+    title += ". This"
+    the_opts = []
     for observer in observers:
         observer_pref = dict[observer]
         for i in [0,1]:        
@@ -100,12 +108,12 @@ def prove_4pieces_for_given_orders(b_order, c_order):
 
         for dict_2 in opts_2:
             print_dict_explanation(dict_2, " "*5)
-            opts_3 = filter_by_equalize3_failure_4pieces(" "*6, dict_2, cutter="b",observers="c", cycles=[])
+            opts_3 = filter_by_equalize3_failure_4pieces(" "*6, dict_2, cutter="b",observers="c", cycles=None)
             if not opts_3: continue
             
             for dict_3 in opts_3:
                 print_dict_explanation(dict_3, " "*7)
-                opts_4 = filter_by_equalize3_failure_4pieces(" "*8, dict_3, cutter="c",observers="b", cycles=[])
+                opts_4 = filter_by_equalize3_failure_4pieces(" "*8, dict_3, cutter="c",observers="b", cycles=None)
                 if not opts_4: continue
 
                 print "Failure!"

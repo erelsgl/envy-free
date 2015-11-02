@@ -42,14 +42,23 @@ class Pref(object):
 
   def add_equalities(self,new_equalities):
     self.equalities += new_equalities
+    
+  @staticmethod 
+  def repr_inequalities(inequalities):
+    the_repr = ""
+    for x in inequalities:
+        the_repr += str(x[0])+"<"+str(x[1])+" "
+    return  the_repr
+
+  @staticmethod 
+  def repr_equalities(equalities):
+    the_repr = ""
+    for x in equalities:
+        the_repr += "=".join(map(str,x))+" "
+    return  the_repr
 
   def __repr__(self):
-    the_repr = ""
-    for x in self.inequalities:
-        the_repr += str(x[0])+"<"+str(x[1])+" "
-    for x in self.equalities:
-        the_repr += "=".join(map(str,x))+" "
-    return the_repr
+    return repr_inequalities(self.inequalities) + repr_equalities(self.equalities)
     
   def interesting_global_inequalities(self):
     the_repr = ""
