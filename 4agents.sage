@@ -10,9 +10,9 @@
 #    C:Equalize(3)
 #
 
-#load ("/home/erelsgl/git/envy-free/Pref.sage")
-load ("/home/erelsgl/git/envy-free/Dict.sage")
-load ("/home/erelsgl/git/envy-free/Opts.sage")
+load ("Pref.sage")
+load ("Dict.sage")
+load ("Opts.sage")
 
 def filter_by_equalize2_failure_4pieces(space, dict, cutter, observers, cycles):
     """

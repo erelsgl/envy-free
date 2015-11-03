@@ -10,8 +10,6 @@
 # Date:   2015-10
 #
 
-load ("/home/erelsgl/git/envy-free/Pref.sage")
-
 def and_dicts(dict1, dict2):
     """
        returns an elementwise-concatenation of the given dictionaries (which represents an AND operation).
