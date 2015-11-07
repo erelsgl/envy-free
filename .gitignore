@@ -55,3 +55,7 @@ docs/_build/
 
 # PyBuilder
 target/
+
+*.sage-chat
+*.sage-history
+
