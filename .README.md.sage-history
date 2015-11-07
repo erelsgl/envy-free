@@ -1,1 +1,17 @@
-"# envy-free\nCode for verifying algorithms for envy-free cake-cutting\n"
+"# envy-free\nCode for verifying algorithms for envy-free cake-cutting.\n\nA worksheet running the code is available in the [SageMath cloud](https://cloud.sagemath.com/projects/7122889a-ace6-4f66-99d0-5bd031dc022f/files/envy-free/main.sagews).\n"
+{"patch":[[[[0,"ud]("],[-1,"https://cloud.sagemath.com/projects/7122889a-ace6-4f66-99d0-5bd031dc022f/files/envy-free/main.sagews)"],[0,".\n"]],133,133,107,6]],"time":1446930551877}
+{"patch":[[[[0,"loud"],[-1,"]("],[0,".\n"]],131,131,8,6]],"time":1446930549875}
+{"patch":[[[[0,"the "],[-1,"["],[0,"Sage"]],116,116,9,8]],"time":1446930547874}
+{"patch":[[[[0," clo"],[-1,"ud."],[1,"de"],[0,"\n"]],128,128,8,7]],"time":1446930524992}
+{"patch":[[[[0,"ageM"],[-1,"ath clode"],[0,"\n"]],121,121,14,5]],"time":1446930522989}
+{"patch":[[[[0,"ilab"],[-1,"le in the SageM"],[0,"\n"]],106,106,20,5]],"time":1446930520988}
+{"patch":[[[[0," is "],[-1,"avail"],[0,"ab\n"]],99,99,12,7]],"time":1446930518988}
+{"patch":[[[[0," run"],[-1,"ning the code is ab"],[0,"\n"]],82,82,24,5]],"time":1446930516986}
+{"patch":[[[[0,"eet "],[-1,"run"],[0,"\n"]],79,79,8,5]],"time":1446930514985}
+{"patch":[[[[0,"work"],[-1,"sheet "],[0,"\n"]],73,73,11,5]],"time":1446930513023}
+{"patch":[[[[0,"g.\n\n"],[-1,"A work"],[0,"\n"]],67,67,11,5]],"time":1446930510979}
+{"patch":[[[[0,"tting.\n\n"],[-1,"\n"]],63,63,9,8]],"time":1446930506980}
+{"patch":[[[[0,"tting.\n\n"],[1,"Main \n"]],63,63,8,14]],"time":1446930504723}
+{"patch":[[[[0,"g.\n\n"],[-1,"Main "],[0,"\n"]],67,67,10,5]],"time":1446930502760}
+{"patch":[[[[0,"utting.\n"],[-1,"\n\n"]],62,62,10,8]],"time":1446930461775}
+{"patch":[[[[0,"ting"],[-1,"."],[0,"\n"]],64,64,6,5]],"time":1446930459776}

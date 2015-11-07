@@ -33,7 +33,7 @@ def filter_by_equalize2_failure_4pieces(space, dict, cutter, observers, cycles):
     whole_pieces_before_trimming = whole_pieces[-1:]
     trimmed_pieces_after_trimming = trimmed_pieces[-1:]
     equalized_pieces = trimmed_pieces[-2:]
-    title = space+cutter+":Equalize(2) means that "+cutter+"'s best pieces are: "+("=".join(equalized_pieces))
+    title = space+cutter+":Equalize(2) makes "+cutter+"'s best pieces: "+("=".join(equalized_pieces))
 
     dict[cutter].equalities.append(equalized_pieces)
     dict[cutter].calc_poset()
@@ -75,7 +75,7 @@ def filter_by_equalize3_failure_4pieces(space, dict, cutter, observers, cycles):
     whole_pieces_before_trimming = whole_pieces[-2:]
     trimmed_pieces_after_trimming = trimmed_pieces[-2:]
     equalized_pieces = trimmed_pieces[-3:]
-    title = space+cutter+":Equalize(3) means that "+cutter+"'s best pieces are: "+("=".join(equalized_pieces))
+    title = space+cutter+":Equalize(3) makes "+cutter+"'s best pieces: "+("=".join(equalized_pieces))
 
     dict[cutter].equalities.append(equalized_pieces)
     dict[cutter].calc_poset()
