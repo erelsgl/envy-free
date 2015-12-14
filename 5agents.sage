@@ -1,13 +1,16 @@
 #
-# This files generates a proof for the correctness of 
-#      the following envy-free cake-cutting protocol for four agents:
+# This files generates a dis-proof for the correctness of 
+#      the following envy-free cake-cutting protocol for five agents:
 #
-# A:Equalize(4) 
+# A:Equalize(5) 
 # One of:
-#    B:Equalize(2) C:Equalize(2)
-#    B:Equalize(3) C:Equalize(2)
-#    C:Equalize(2) B:Equalize(2)
-#    C:Equalize(3) B:Equalize(2)
+#    B:Equalize(2) C:Equalize(2) D:Equalize(2)
+#    B:Equalize(2) C:Equalize(3) D:Equalize(2)
+#    B:Equalize(3) C:Equalize(2) D:Equalize(2)
+#    B:Equalize(3) C:Equalize(3) D:Equalize(2)
+#    B:Equalize(4) C:Equalize(2) D:Equalize(2)
+#    B:Equalize(4) C:Equalize(3) D:Equalize(2)
+#    [and similarly for the other 5 permutations of B, C, D]
 #
 
 load ("4agents.sage")
@@ -146,6 +149,7 @@ def prove_5pieces_for_given_orders(b_order, c_order, d_order):
                                     
                                     print "\n\n*** Failure! "
                                     return opts_9
+    print "So for these specific orderings, at least one path succeeds."
  
 
 def prove_5pieces_for_given_order_sets(b_orders, c_orders, d_orders):
@@ -153,7 +157,7 @@ def prove_5pieces_for_given_order_sets(b_orders, c_orders, d_orders):
     for b_order in b_orders:
         for c_order in c_orders:
             for d_order in d_orders:
-                print "Consider the case in which the orderings are: b:", Pref.repr_chain(b_order), "  c:", Pref.repr_chain(c_order), "    d:", Pref.repr_chain(d_order)
+                print "\n Consider the case in which the orderings are: b:", Pref.repr_chain(b_order), "  c:", Pref.repr_chain(c_order), "    d:", Pref.repr_chain(d_order)
                 opts = prove_5pieces_for_given_orders(b_order, c_order, d_order)
 
                 if opts:
