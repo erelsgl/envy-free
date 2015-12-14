@@ -4,10 +4,10 @@
 #
 # A:Equalize(4) 
 # One of:
-#    B:Equalize(2) C:Equalize(2)
-#    B:Equalize(3) C:Equalize(2)
-#    C:Equalize(2) B:Equalize(2)
-#    C:Equalize(3) B:Equalize(2)
+#    B:Equalize(2);   C:Equalize(2)
+#    B:Equalize(3);   C:Equalize(2)
+#    C:Equalize(2);   B:Equalize(2)
+#    C:Equalize(3);   B:Equalize(2)
 #
 
 load ("Pref.sage")
