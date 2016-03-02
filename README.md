@@ -1,5 +1,7 @@
 # envy-free
-Code for verifying algorithms for envy-free cake-cutting.
+This project contains the SageMath code that we used to prove the correctness of our envy-free cake-cutting protocol.
+
+For details about the protocol, see [our waste-makes-haste paper](http://arxiv.org/abs/1511.02599).
 
 You can run the code directly in the SageMath cloud:
 
